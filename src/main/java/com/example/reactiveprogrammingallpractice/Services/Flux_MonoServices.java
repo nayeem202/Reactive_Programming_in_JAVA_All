@@ -3,7 +3,10 @@ package com.example.reactiveprogrammingallpractice.Services;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Random;
+import java.util.function.Function;
 
 public class Flux_MonoServices {
 
@@ -32,7 +35,106 @@ public class Flux_MonoServices {
                 .flatMap(i -> Flux.just(i.split("")));
     }
 
-   public Mono<String> monoService(){
+    public Flux<String> fruitsFluxFlatMapAsync(){
+        return Flux.fromIterable(List.of("Mango","Orange", "Banana"))
+                .flatMap(s -> Flux.just(s.split(""
+                )).delayElements(Duration.ofMillis(
+                        new Random().nextInt(1000)
+                ))).log();
+    }
+
+    public Flux<String> fruitsFluxConcatMap(){
+        return Flux.fromIterable(List.of("Mango","Orange", "Banana"))
+                .concatMap(s -> Flux.just(s.split(""
+                )).delayElements(Duration.ofMillis(
+                        new Random().nextInt(1000)
+                ))).log();
+    }
+
+
+
+
+
+    public Mono<List<String>> fruitsMonoFlatMap(){
+        return Mono.just("Mango")
+                .flatMap(s-> Mono.just(List.of(s.split("")))).log();
+    }
+
+
+    //***************flat map many******************
+    public Flux<String> fruitsMonoFlatMapMany(){
+        return Mono.just("Mango")
+                .flatMapMany(s-> Flux.just(s.split(""))).log();
+    }
+
+
+    //**************transfer operator***************
+    public Flux<String> fruitsFluxTransform(int number){
+        Function<Flux <String>,Flux<String>> filterData
+                = data -> data.filter(s-> s.length() > number);
+
+        return  Flux.fromIterable(List.of("Mango", "Orange","Banana"))
+                .transform(filterData)
+                .log();
+
+    }
+
+
+    public Flux<String> fruitsFluxTransformDefaultIfEmpty(int number){
+        Function<Flux <String>,Flux<String>> filterData
+                = data -> data.filter(s-> s.length() > number);
+
+        return  Flux.fromIterable(List.of("Mango", "Orange","Banana"))
+                .transform(filterData)
+                .defaultIfEmpty("Default")
+                .log();
+    }
+
+    //**************Switch if empty operator***********************8
+    public Flux<String> fruitsFluxTransformSwitchIfEmpty(int number){
+        Function<Flux <String>,Flux<String>> filterData
+                = data -> data.filter(s-> s.length() > number);
+
+        return  Flux.fromIterable(List.of("Mango", "Orange","Banana"))
+                .transform(filterData)
+                .switchIfEmpty(Flux.just("Pineapple","Jackfruit")
+                        .transform(filterData))
+                .log();
+
+    }
+
+
+    //*************************Merge**********************
+    public Flux<String> fruitsMerge(){
+        var fruits1 = Flux.just("Apple", "Banana")
+                .delayElements(Duration.ofMillis(40)).log();
+        var Fruits2 = Flux.just("PineApple", "Lichi")
+                .delayElements(Duration.ofMillis(55)).log();
+       /*return fruits1.merge(Fruits2);
+*/
+        return Flux.merge(fruits1,Fruits2);
+    }
+    //****************************************Merge With******************************8
+    public Flux<String> fruitsMergeWith(){
+        var fruits1 = Flux.just("Apple", "Banana")
+                .delayElements(Duration.ofMillis(40));
+        var Fruits2 = Flux.just("PineApple", "Lichi")
+                .delayElements(Duration.ofMillis(55));
+        return fruits1.mergeWith(Fruits2);
+    }
+   //**********************Merge Sequential*******************
+   public Flux<String> fruitsMergeWitSequential(){
+
+       var fruits1 = Flux.just("Apple", "Banana")
+               .delayElements(Duration.ofMillis(40));
+       var fruits2 = Flux.just("PineApple", "Lichi")
+               .delayElements(Duration.ofMillis(55));
+       return Flux.mergeSequential(fruits1,  fruits2);
+
+   }
+
+
+    public Mono<String> monoService(){
         return Mono.just("Lichi");
    }
 

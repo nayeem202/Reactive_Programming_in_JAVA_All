@@ -5,6 +5,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.List;
+
 class Flux_MonoServicesTest {
     Flux_MonoServices fluxMonoServices = new Flux_MonoServices();
     @Test
@@ -57,5 +59,91 @@ class Flux_MonoServicesTest {
                .expectNextCount(19)
                .verifyComplete();
 
+    }
+
+    @Test
+    void fruitsFluxFlatMapAsync() {
+           Flux<String> fruitsFlux = fluxMonoServices.fruitsFluxFlatMapAsync();
+            StepVerifier.create(fruitsFlux)
+                    .expectNextCount(17)
+                    .verifyComplete();
+    }
+
+
+    @Test
+    void fruitsMonoFlatMap() {
+       Mono<List<String>> fruitsFlux = fluxMonoServices.fruitsMonoFlatMap();
+       StepVerifier.create(fruitsFlux)
+               .expectNextCount(1)
+               .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxConcatMap() {
+        Flux<String> fruitsFlux = fluxMonoServices.fruitsFluxConcatMap();
+        StepVerifier.create(fruitsFlux)
+                .expectNextCount(17)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsMonoFlatMapMany() {
+        Flux<String> fruitsFlux = fluxMonoServices.fruitsMonoFlatMapMany();
+        StepVerifier.create(fruitsFlux)
+                .expectNextCount(5)
+                .verifyComplete();
+    }
+
+
+    @Test
+    void fruitsFluxTransform() {
+        Flux<String> fruits =  fluxMonoServices.fruitsFluxTransform(5);
+
+        StepVerifier.create(fruits)
+                .expectNext("Orange", "Banana ")
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxTransformDefaultIfEmpty() {
+
+        Flux<String> fruits =  fluxMonoServices.fruitsFluxTransformDefaultIfEmpty(10);
+
+        StepVerifier.create(fruits)
+                .expectNext("Default")
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxTransformSwitchIfEmpty() {
+        Flux<String> fruits =  fluxMonoServices.fruitsFluxTransformSwitchIfEmpty(8);
+
+        StepVerifier.create(fruits)
+                .expectNext("Pineapple", "Jackfruit")
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsMerge() {
+        Flux<String> fruits =  fluxMonoServices.fruitsMerge();
+        StepVerifier.create(fruits)
+                .expectNext("Apple", "PineApple", "Banana", "Lichi")
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsMergeWith() {
+        Flux<String> fruits =  fluxMonoServices.fruitsMergeWith();
+        StepVerifier.create(fruits)
+                .expectNext("Apple", "PineApple", "Banana", "Lichi")
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsMergeWitSequential() {
+           Flux<String> fruits =  fluxMonoServices.fruitsMergeWitSequential();
+        StepVerifier.create(fruits)
+                .expectNext("Apple", "Banana", "PineApple" , "Lichi")
+                .verifyComplete();
     }
 }
