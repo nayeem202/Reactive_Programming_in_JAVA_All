@@ -146,4 +146,50 @@ class Flux_MonoServicesTest {
                 .expectNext("Apple", "Banana", "PineApple" , "Lichi")
                 .verifyComplete();
     }
+
+    @Test
+    void fruitsFluxZip() {
+       Flux<String> fruits =  fluxMonoServices.fruitsFluxZip().log();
+       StepVerifier.create(fruits)
+               .expectNext("AppleMango", "PineAppleOrange")
+               .verifyComplete();
+
+    }
+
+
+    @Test
+    void fruitsFluxWithZip() {
+        Flux<String> fruits =  fluxMonoServices.fruitsFluxZip().log();
+        StepVerifier.create(fruits)
+                .expectNext("AppleMango", "PineAppleOrange")
+                .verifyComplete();
+
+    }
+
+    @Test
+    void fruitsFluxZipTuple() {
+    }
+
+    @Test
+    void fuitsFluxFilterDoOn() {
+        var fruitsFlux = fluxMonoServices.fuitsFluxFilterDoOn(5).log();
+        StepVerifier.create(fruitsFlux)
+                .expectNext("Banana")
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxErrorReturn() {
+        var fruitsFlux = fluxMonoServices.fruitsFluxErrorReturn().log();
+        StepVerifier.create(fruitsFlux)
+                .expectNext("Apple", "Mango", "Orange")
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxOnErrorContinue() {
+        var fruitFlux = fluxMonoServices.fruitsFluxOnErrorContinue().log();
+        StepVerifier.create(fruitFlux).
+                expectNext("APPLE", "ORANGE").verifyComplete();
+    }
 }

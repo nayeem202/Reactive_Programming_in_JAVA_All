@@ -133,6 +133,63 @@ public class Flux_MonoServices {
 
    }
 
+    //**********************zip*****************************************************
+    public Flux<String> fruitsFluxZip(){
+        var fruits1 = Flux.just("Apple", "PineApple");
+        var fruits2 = Flux.just("Mango", "Orange");
+        return Flux.zip(fruits1,fruits2, (first,second) -> first+second).log();
+    }
+
+    public Flux<String> fruitsFluxWithZip(){
+        var  fruits1 = Flux.just("Apple", "PineApple");
+        var fruits2 = Flux.just("Mango", "Orange");
+        return fruits1.zipWith(fruits2, (first,second) -> first + second).log();
+    }
+
+    public Flux<String> fruitsFluxZipTuple(){
+        var fruits = Flux.just("Apple", "PineApple");
+        var vegetables = Flux.just("Bean", "Tometo");
+        var moreVegetables =  Flux.just("cucumber", "poteto");
+        return Flux.zip(fruits,vegetables, moreVegetables)
+                .map(objects -> objects.getT1()+ objects.getT2() + objects.getT2());
+    }
+
+    //******************************************DoOn****************************
+    public Flux<String> fuitsFluxFilterDoOn(Integer number){
+        return Flux.fromIterable(List.of("Mango", "Apple", "Banana"))
+                .filter( s -> s.length() > number)
+                .doOnNext(s -> {
+                    System.out.println("s "+s);
+                })
+                .doOnSubscribe(subscription -> {
+                    System.out.println("Subscription.toString" + subscription.toString());
+                })
+                .doOnComplete(() -> System.out.println("Completed"));
+    }
+
+
+
+    //*********************Error Return*************************
+    public Flux<String> fruitsFluxErrorReturn(){
+        return Flux.just("Apple", "Mango")
+                .concatWith(Flux.error(new RuntimeException("Exception Occured")))
+                        .onErrorReturn("Orange");
+    }
+
+    //********************OnerrorContinue***********************
+
+    public Flux<String> fruitsFluxOnErrorContinue(){
+      return Flux.just("Apple", "Mango", "Orange")
+              .map(s -> {
+                  if(s.equalsIgnoreCase("Mango"))
+                      throw new RuntimeException("exception occured");
+                      return s.toUpperCase();
+              })
+              .onErrorContinue((e,f) -> {
+                  System.out.println("e = " + e);
+                  System.out.println("f = " + f);
+              });
+    }
 
     public Mono<String> monoService(){
         return Mono.just("Lichi");
@@ -151,6 +208,8 @@ public class Flux_MonoServices {
         );
 
     }
+
+
 
 
 
