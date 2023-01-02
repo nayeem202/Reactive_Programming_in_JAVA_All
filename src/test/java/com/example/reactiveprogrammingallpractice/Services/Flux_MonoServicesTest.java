@@ -192,4 +192,23 @@ class Flux_MonoServicesTest {
         StepVerifier.create(fruitFlux).
                 expectNext("APPLE", "ORANGE").verifyComplete();
     }
+
+    @Test
+    void fruitFluxOnErrorMap() {
+        var fruitFlux = fluxMonoServices.fruitFluxOnErrorMap();
+        StepVerifier.create(fruitFlux)
+                .expectNext("APPLE")
+                .expectError(IllegalStateException.class)
+                .verify();
+    }
+
+    @Test
+    void fruitFluxDoOnError() {
+        var fruitFlux = fluxMonoServices.fruitFluxDoOnError();
+        StepVerifier.create(fruitFlux)
+                .expectNext("APPLE")
+                .expectError(RuntimeException.class)
+                .verify();
+
+    }
 }

@@ -178,6 +178,7 @@ public class Flux_MonoServices {
 
     //********************OnerrorContinue***********************
 
+
     public Flux<String> fruitsFluxOnErrorContinue(){
       return Flux.just("Apple", "Mango", "Orange")
               .map(s -> {
@@ -190,6 +191,43 @@ public class Flux_MonoServices {
                   System.out.println("f = " + f);
               });
     }
+
+    //****************************************On error map*******************************
+
+    public Flux<String> fruitFluxOnErrorMap(){
+        return Flux.just("Apple", "Mango", "Orange")
+                .map(s -> {
+                    if(s.equalsIgnoreCase("Mango"))
+                        throw new RuntimeException("exception occured");
+                    return s.toUpperCase();
+                })
+                .onErrorMap(throwable -> {
+                        System.out.println("Thorwable =" + throwable);
+                        return new IllegalStateException("From onError map");
+                });
+    }
+
+
+
+    //********************************Do on Error ********************8
+    public Flux<String> fruitFluxDoOnError(){
+        return Flux.just("Apple", "Mango", "Orange")
+                .map(s -> {
+                    if(s.equalsIgnoreCase("Mango"))
+                        throw new RuntimeException("exception occured");
+                    return s.toUpperCase();
+                })
+                .doOnError(throwable -> {
+                    System.out.println("Thorwable =" + throwable);
+
+                });
+    }
+
+
+
+
+
+
 
     public Mono<String> monoService(){
         return Mono.just("Lichi");
