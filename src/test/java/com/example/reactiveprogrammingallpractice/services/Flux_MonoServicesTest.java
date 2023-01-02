@@ -54,6 +54,8 @@ class Flux_MonoServicesTest {
 
     }
 
+
+    //flat map
     @Test
     void fruitsFluxFlatMap() {
        Flux<String> fruits =  fluxMonoServices.fruitsFluxFlatMap();
