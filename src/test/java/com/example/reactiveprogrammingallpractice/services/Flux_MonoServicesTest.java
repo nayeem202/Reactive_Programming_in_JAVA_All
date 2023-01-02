@@ -1,9 +1,11 @@
-package com.example.reactiveprogrammingallpractice.Services;
+package com.example.reactiveprogrammingallpractice.services;
 
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+import reactor.tools.agent.ReactorDebugAgent;
 
 import java.util.List;
 
@@ -195,7 +197,10 @@ class Flux_MonoServicesTest {
 
     @Test
     void fruitFluxOnErrorMap() {
-        var fruitFlux = fluxMonoServices.fruitFluxOnErrorMap();
+        //Hooks.onOperatorDebug();
+       ReactorDebugAgent.init();
+       ReactorDebugAgent.processExistingClasses();
+        var fruitFlux = fluxMonoServices.fruitFluxOnErrorMap().log();
         StepVerifier.create(fruitFlux)
                 .expectNext("APPLE")
                 .expectError(IllegalStateException.class)
@@ -209,6 +214,5 @@ class Flux_MonoServicesTest {
                 .expectNext("APPLE")
                 .expectError(RuntimeException.class)
                 .verify();
-
     }
 }

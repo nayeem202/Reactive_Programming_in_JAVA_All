@@ -1,4 +1,4 @@
-package com.example.reactiveprogrammingallpractice.Services;
+package com.example.reactiveprogrammingallpractice.services;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -196,11 +196,13 @@ public class Flux_MonoServices {
 
     public Flux<String> fruitFluxOnErrorMap(){
         return Flux.just("Apple", "Mango", "Orange")
+                .checkpoint("Error Check Point 1")
                 .map(s -> {
                     if(s.equalsIgnoreCase("Mango"))
                         throw new RuntimeException("exception occured");
                     return s.toUpperCase();
                 })
+                .checkpoint("Error Check Point 2")
                 .onErrorMap(throwable -> {
                         System.out.println("Thorwable =" + throwable);
                         return new IllegalStateException("From onError map");
